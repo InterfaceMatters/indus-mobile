@@ -1,0 +1,175 @@
+// TODO: Remove when not needed.
+
+import React, {useState, useEffect} from 'react';
+import {View} from 'react-native';
+import {Button, Subheading} from 'react-native-paper';
+import TextInput from 'react-native-paper/src/components/TextInput/TextInput';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
+import {BleManager} from 'react-native-ble-plx';
+
+const requestNotificationPermission = () => {
+  messaging()
+    .requestPermission()
+    .then(() => {
+      return true;
+      // User has authorised
+    })
+    .catch(error => {
+      return false;
+      // User has rejected permissions
+    });
+};
+
+const setToken = async () => {
+  const fcmToken = await messaging().getToken();
+  if (fcmToken) {
+    // user has a device token
+    firestore()
+      .collection('temp')
+      .doc('nBPuzvtguV1UIYyxkkRo')
+      .update({fcmToken})
+      .then(() => alert('Added!'));
+
+    createNotificationListeners();
+  } else {
+    throw new Error('token not found.');
+  }
+};
+
+function createNotificationListeners() {
+  /*
+   * Triggered when a particular notification has been received in foreground
+   * */
+  messaging().onMessage(async remoteMessage => {
+    console.log(`A new FCM message arrived! ${JSON.stringify(remoteMessage)}`);
+  });
+
+  messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('Message handled in the background!', remoteMessage);
+  });
+}
+
+const App = () => {
+  const [confirm, setConfirm] = useState(null);
+
+  const [code, setCode] = useState('');
+
+  const [user, setLoggedInUser] = useState(null);
+  const [userName, setUserName] = useState(null);
+  const blManager = new BleManager();
+
+  useEffect(() => {
+    // if (user) {
+    //   const enabled = messaging().hasPermission();
+    //   if (enabled) {
+    //     // user has permissions
+    //     setToken();
+    //   } else {
+    //     // user doesn't have permission
+    //     requestNotificationPermission();
+    //   }
+    // }
+
+    const subscription = blManager.onStateChange(state => {
+      if (state === 'PoweredOn') {
+        scanAndConnect();
+        subscription.remove();
+      }
+    }, true);
+  });
+
+  function scanAndConnect() {
+    blManager.startDeviceScan(
+      null,
+      {allowDuplicates: false},
+      (error, device) => {
+        if (error) {
+          // Handle error (scanning will be stopped automatically)
+          console.log('ERR', error);
+          return;
+        }
+
+        if(device.txPowerLevel !== null){
+          console.log('FOUND', device);
+        }
+
+        // Check if it is a device you are looking for based on advertisement data
+        // or other criteria.
+        // if (device.name === 'TI BLE Sensor Tag' ||
+        //     device.name === 'SensorTag') {
+        //
+        //   // Stop scanning as it's not necessary if you are scanning for one device.
+        //   blManager.stopDeviceScan();
+        //
+        //   // Proceed with connection.
+        // }
+      },
+    );
+  }
+
+  // Handle the button press
+  async function signInWithPhoneNumber(phoneNumber) {
+    const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+    setConfirm(confirmation);
+  }
+
+  async function confirmCode() {
+    try {
+      const res = await confirm.confirm(code);
+      console.log('RES', res);
+      setLoggedInUser(res._user);
+    } catch (error) {
+      alert('Invalid code.');
+      console.log('Invalid code.');
+    }
+  }
+
+  const getUserName = async () => {
+    const tempDoc = await firestore()
+      .collection('temp')
+      .doc('nBPuzvtguV1UIYyxkkRo')
+      .get();
+    const {name} = tempDoc.data();
+    setUserName(name);
+  };
+
+  return (
+    <View>
+      {!confirm ? (
+        <Button
+          mode="contained"
+          onPress={() => signInWithPhoneNumber('+91 9158187707')}>
+          Sign in
+        </Button>
+      ) : !user ? (
+        <>
+          <TextInput
+            style={{height: 40, border: '1px solid'}}
+            value={code}
+            onChangeText={text => setCode(text)}
+          />
+          <Button mode="contained" onPress={() => confirmCode()}>
+            Confirm Code
+          </Button>
+        </>
+      ) : (
+        <></>
+      )}
+
+      {user ? (
+        <>
+          <Subheading>Logged In. {user.phoneNumber}</Subheading>
+          <Button onPress={() => getUserName()}>Get User Name</Button>
+        </>
+      ) : (
+        <></>
+      )}
+
+      {userName ? <Subheading>{userName}</Subheading> : null}
+    </View>
+  );
+};
+
+export default App;
