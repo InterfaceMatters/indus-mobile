@@ -4,7 +4,7 @@ import { FlatList, View } from 'react-native';
 import ListCard from '../../../components/ListCard';
 import Loader from '../../../components/Loader';
 import { fetchAlerts } from '../../../operations/home';
-import EmptyComponent from '../../EmptyComponent';
+import EmptyComponent from '../../../components/EmptyComponent';
 import { Text } from '../../../components/Typography';
 import colors from '../../../theme/colors';
 import AccessCard from '../components/AccessCard';

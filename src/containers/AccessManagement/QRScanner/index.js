@@ -3,7 +3,7 @@ import commonStyles from '../../../theme/commonStyles';
 import { TextInput, View } from 'react-native';
 import Loader from '../../../components/Loader';
 import colors from '../../../theme/colors';
-import EmptyComponent from "../../EmptyComponent";
+import EmptyComponent from "../../../components/EmptyComponent";
 
 const QRScanner = () => {
   const [loading, setLoading] = useState(true);

@@ -3,7 +3,7 @@ import commonStyles from '../../../theme/commonStyles';
 import { FlatList, View } from 'react-native';
 import ListCard from '../../../components/ListCard';
 import Loader from '../../../components/Loader';
-import EmptyComponent from '../../EmptyComponent';
+import EmptyComponent from '../../../components/EmptyComponent';
 import colors from '../../../theme/colors';
 import icBlock from '../../../icons/ic-block.png';
 import icAllow from '../../../icons/ic-allow.png';

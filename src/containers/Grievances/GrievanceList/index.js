@@ -8,7 +8,7 @@ import { fetchAllGrievances } from '../../../operations/grievances';
 import icGrievanceFlag from '../../../icons/ic-grievance-flag.png';
 import Loader from '../../../components/Loader';
 import { useIsFocused } from '@react-navigation/native';
-import EmptyComponent from "../../EmptyComponent";
+import EmptyComponent from "../../../components/EmptyComponent";
 
 const GrievanceList = ({ navigation }) => {
   const [list, setGrievanceList] = useState([]);

@@ -4,7 +4,7 @@ import ListCard from '../../../components/ListCard';
 import commonStyles from '../../../theme/commonStyles';
 import { fetchAllProtocols } from '../../../operations/protocols';
 import Loader from '../../../components/Loader';
-import EmptyComponent from "../../EmptyComponent";
+import EmptyComponent from "../../../components/EmptyComponent";
 
 const ProtocolList = ({ navigation }) => {
   const [list, setProtocolList] = useState([]);
