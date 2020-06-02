@@ -38,7 +38,6 @@ const App = () => {
       );
     }
     setUser(user);
-    if (initializing) setInitializing(false);
   }
 
   useEffect(() => {
@@ -54,6 +53,7 @@ const App = () => {
         setSnackBarVisible(true);
       },
     });
+    if (initializing) setInitializing(false);
     return subscriber;
   }, []);
 

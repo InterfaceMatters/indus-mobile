@@ -13,6 +13,8 @@ import icProtocolActive from '../icons/ic-protocol-active.png';
 import icProtocolInactive from '../icons/ic-protocol-inactive.png';
 import icGrievanceActive from '../icons/ic-grievance-active.png';
 import icGrievanceInactive from '../icons/ic-grievance-inactive.png';
+import icLogsActive from '../icons/ic-logs-active.png';
+import icLogsInactive from '../icons/ic-logs-inactive.png';
 
 import Login from '../containers/onBoarding/Login';
 import NewGrievanceReport from '../containers/Grievances/NewGrievanceReport';
@@ -20,6 +22,7 @@ import Home from '../containers/Home';
 import Protocol from '../containers/Protocol';
 import Grievances from '../containers/Grievances';
 import RequestOtp from '../containers/onBoarding/RequestOtp';
+import AccessManagement from "../containers/AccessManagement";
 
 const Stack = createStackNavigator();
 const RootStack = createStackNavigator();
@@ -39,6 +42,8 @@ const RootTabNav = () => (
           iconName = focused ? icProtocolActive : icProtocolInactive;
         } else if (route.name === 'Grievances') {
           iconName = focused ? icGrievanceActive : icGrievanceInactive;
+        } else if (route.name === 'Access Management') {
+          iconName = focused ? icLogsActive : icLogsInactive;
         }
 
         return <Image source={iconName} style={commonStyles.iconStyle} />;
@@ -50,6 +55,7 @@ const RootTabNav = () => (
       showLabel: false,
     }}>
     <Tab.Screen name="Home" component={Home} />
+    <Tab.Screen name="Access Management" component={AccessManagement} />
     <Tab.Screen name="Protocols" component={Protocol} />
     <Tab.Screen name="Grievances" component={Grievances} />
   </Tab.Navigator>
