@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import commonStyles from '../../../theme/commonStyles';
-import { Image, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, TextInput, View } from 'react-native';
 import Loader from '../../../components/Loader';
 import colors from '../../../theme/colors';
 import EmptyComponent from '../../../components/EmptyComponent';
 import { Card } from 'react-native-paper';
 import icQrCode from '../../../icons/qr-code.png';
 import { SubHeading, Text } from '../../../components/Typography';
-import QRCodeScanner from 'react-native-qrcode-scanner';
 import QrScreen from '../../Home/components/QrScreen';
 
 const QRScanner = () => {
   const [loading, setLoading] = useState(true);
-  const [phoneNumber, setPhoneNumber] = useState([]);
-  const [qrScanner, setQRScanner] = useState([]);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [qrScanner, setQRScanner] = useState(false);
 
   useEffect(() => {
     setLoading(false);
