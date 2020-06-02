@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, View, StyleSheet, Image } from 'react-native';
+import { FlatList, View, Image } from 'react-native';
 import ListCard from '../../../components/ListCard';
 import commonStyles from '../../../theme/commonStyles';
 import { FAB } from 'react-native-paper';
@@ -8,6 +8,7 @@ import { fetchAllGrievances } from '../../../operations/grievances';
 import icGrievanceFlag from '../../../icons/ic-grievance-flag.png';
 import Loader from '../../../components/Loader';
 import { useIsFocused } from '@react-navigation/native';
+import EmptyComponent from "../../EmptyComponent";
 
 const GrievanceList = ({ navigation }) => {
   const [list, setGrievanceList] = useState([]);
@@ -64,12 +65,12 @@ const GrievanceList = ({ navigation }) => {
             setLoading(true);
             fetchGrievanceList();
           }}
-          // ListEmptyComponent={<EmptyComponent />}
+          ListEmptyComponent={<EmptyComponent />}
         />
       </View>
 
       <FAB
-        style={styles.fab}
+        style={commonStyles.fab}
         icon="plus"
         color={colors.white}
         onPress={() => navigation.navigate('New grievance report')}
@@ -77,15 +78,5 @@ const GrievanceList = ({ navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    backgroundColor: colors.primary,
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-});
 
 export default GrievanceList;

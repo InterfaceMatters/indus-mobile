@@ -4,6 +4,7 @@ import ListCard from '../../../components/ListCard';
 import commonStyles from '../../../theme/commonStyles';
 import { fetchAllProtocols } from '../../../operations/protocols';
 import Loader from '../../../components/Loader';
+import EmptyComponent from "../../EmptyComponent";
 
 const ProtocolList = ({ navigation }) => {
   const [list, setProtocolList] = useState([]);
@@ -49,7 +50,7 @@ const ProtocolList = ({ navigation }) => {
           setLoading(true);
           fetchProtocolList();
         }}
-        // ListEmptyComponent={<EmptyComponent />}
+        ListEmptyComponent={<EmptyComponent />}
       />
     </View>
   );

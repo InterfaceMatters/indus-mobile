@@ -41,6 +41,13 @@ const commonStyles = StyleSheet.create({
     marginTop: 16,
     marginRight: 16,
   },
+  fab: {
+    position: 'absolute',
+    backgroundColor: colors.primary,
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  }
 });
 
 export default commonStyles;
