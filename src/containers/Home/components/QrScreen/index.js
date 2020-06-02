@@ -4,20 +4,42 @@ import { StyleSheet, View } from 'react-native';
 import { SubHeading } from '../../../../components/Typography';
 import colors from '../../../../theme/colors';
 import GenerateQrCode from '../../../../components/GenerateQrCode';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import {screenWidth} from "../../../../utils";
 
-const QrScreen = ({ handleClose, visible, userId }) => (
+const QrScreen = ({ handleClose, visible, userId, mode }) => (
   <Portal>
     <Modal
       visible={visible}
       onDismiss={handleClose}
       animationType="slide"
       contentContainerStyle={styles.containerStyle}>
-      <View style={styles.qrCodeContainer}>
-        <GenerateQrCode val={userId} size={200} />
-      </View>
-      <SubHeading style={{ fontWeight: '500', marginTop: 24 }}>
-        Scan this QR code for workplace access before entering
-      </SubHeading>
+      {userId ? (
+        <>
+          <View style={styles.qrCodeContainer}>
+            <GenerateQrCode val={userId} size={200} />
+          </View>
+
+          <SubHeading style={{ fontWeight: '500', marginTop: 24 }}>
+            Scan this QR code for workplace access before entering
+          </SubHeading>
+        </>
+      ) : null}
+
+      {mode === 'scan' ? (
+        <View style={{flex: 0.7, marginTop: 60}}>
+          <QRCodeScanner
+            cameraStyle={{ width: screenWidth - 100, height: 250 }}
+            showMarker={true}
+            markerStyle={{ borderColor: colors.accent, height: 220 }}
+            fadeIn={false}
+            onRead={(e) => {
+                console.log("SCANNED", e);
+                handleClose();
+            }}
+          />
+        </View>
+      ) : null}
       <IconButton
         icon="close"
         style={{
