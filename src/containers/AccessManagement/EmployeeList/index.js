@@ -10,7 +10,7 @@ import icAllow from '../../../icons/ic-allow.png';
 import { fetchAllEmployees } from '../../../operations/accessManagement';
 import { FAB } from 'react-native-paper';
 
-const EmployeeList = () => {
+const EmployeeList = ({navigation}) => {
   const [loading, setLoading] = useState(true);
   const [employeeList, setEmployeeList] = useState([]);
 
@@ -60,7 +60,7 @@ const EmployeeList = () => {
         style={commonStyles.fab}
         icon="qrcode-scan"
         color={colors.white}
-        onPress={() => null}
+        onPress={() => navigation.navigate('Identify Employee')}
       />
     </>
   );
