@@ -8,6 +8,7 @@ import { Card } from 'react-native-paper';
 import icQrCode from '../../../icons/qr-code.png';
 import { SubHeading, Text } from '../../../components/Typography';
 import QrScreen from '../../Home/components/QrScreen';
+import {fetchUserDataByAuthId} from "../../../operations/onBoarding";
 
 const QRScanner = () => {
   const [loading, setLoading] = useState(true);
@@ -19,6 +20,10 @@ const QRScanner = () => {
   }, []);
 
   if (loading) return <Loader />;
+
+  const onScan = async (uid) => {
+      const userDetails = await fetchUserDataByAuthId(uid);
+  };
 
   return (
     <View
@@ -41,6 +46,7 @@ const QRScanner = () => {
         mode={'scan'}
         visible={qrScanner}
         handleClose={() => setQRScanner(false)}
+        onScan={onScan}
       />
 
       <Card style={{ marginTop: 16 }} onPress={() => setQRScanner(true)}>

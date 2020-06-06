@@ -7,7 +7,7 @@ import GenerateQrCode from '../../../../components/GenerateQrCode';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {screenWidth} from "../../../../utils";
 
-const QrScreen = ({ handleClose, visible, userId, mode }) => (
+const QrScreen = ({ handleClose, visible, userId, mode, onScan }) => (
   <Portal>
     <Modal
       visible={visible}
@@ -34,7 +34,7 @@ const QrScreen = ({ handleClose, visible, userId, mode }) => (
             markerStyle={{ borderColor: colors.accent, height: 220 }}
             fadeIn={false}
             onRead={(e) => {
-                console.log("SCANNED", e);
+                onScan(e.data);
                 handleClose();
             }}
           />

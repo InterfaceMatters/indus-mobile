@@ -15,7 +15,7 @@ const fetchUserDataByAuthId = async uid => {
     return { ...userData.data(), id: userData.id };
   } catch (e) {
     Message.error(e.message);
-    await signOut();
+    throw new Error(e);
   }
 };
 

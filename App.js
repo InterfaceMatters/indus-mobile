@@ -6,7 +6,7 @@ import theme from './src/theme';
 import { authIns } from './src/firebase';
 import colors from './src/theme/colors';
 import AsyncStorage from '@react-native-community/async-storage';
-import { fetchUserDataByAuthId } from './src/operations/onBoarding';
+import { fetchUserDataByAuthId, signOut } from './src/operations/onBoarding';
 import Loader from './src/components/Loader';
 import Message from './src/components/Message';
 import Navigation from './src/navigation';
@@ -19,23 +19,27 @@ const App = () => {
 
   async function onAuthStateChanged(user) {
     if (user) {
-      const userDetails = await fetchUserDataByAuthId(user.uid);
-      const {
-        orgId,
-        roleId,
-        id,
-        name,
-        hasAccess,
-        entryTime,
-        exitTime,
-      } = userDetails;
-      await AsyncStorage.setItem('orgId', orgId);
-      await AsyncStorage.setItem('userId', id);
-      await AsyncStorage.setItem('roleId', roleId.toString());
-      await AsyncStorage.setItem(
-        'userDetails',
-        JSON.stringify({ name, hasAccess, entryTime, exitTime }),
-      );
+      try {
+        const userDetails = await fetchUserDataByAuthId(user.uid);
+        const {
+          orgId,
+          roleId,
+          id,
+          name,
+          hasAccess,
+          entryTime,
+          exitTime,
+        } = userDetails;
+        await AsyncStorage.setItem('orgId', orgId);
+        await AsyncStorage.setItem('userId', id);
+        await AsyncStorage.setItem('roleId', roleId.toString());
+        await AsyncStorage.setItem(
+          'userDetails',
+          JSON.stringify({ name, hasAccess, entryTime, exitTime }),
+        );
+      } catch (e) {
+        await signOut();
+      }
     }
     setUser(user);
   }
