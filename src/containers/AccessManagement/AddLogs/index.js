@@ -26,11 +26,10 @@ const AddLogs = ({ route, navigation }) => {
     const employeeDetails = uid
       ? await fetchUserDataByAuthId(uid)
       : await fetchUserDataByPhoneNumber(phoneNumber);
-    if(employeeDetails !== null){
+    if (employeeDetails !== null) {
       setEmployee(employeeDetails);
       setLoading(false);
-    }
-    else {
+    } else {
       navigation.goBack();
     }
   };
@@ -45,61 +44,59 @@ const AddLogs = ({ route, navigation }) => {
   if (loading) return <Loader />;
 
   return (
-    <View
-      style={{
+    <ScrollView
+      contentContainerStyle={{
         ...commonStyles.screenContainer,
         ...commonStyles.screenContainer2,
       }}>
-      <ScrollView>
-        <AccessCard employeeDetails={employee} />
-        {employee.hasAccess && (
-          <View style={{ marginTop: 16 }}>
-            <Text style={{ color: colors.accent }}>
-              Record employee’s body temperature
-            </Text>
-            <TextInput
+      <AccessCard employeeDetails={employee} />
+      {employee.hasAccess && (
+        <View style={{ marginTop: 16 }}>
+          <Text style={{ color: colors.accent }}>
+            Record employee’s body temperature
+          </Text>
+          <TextInput
+            style={{
+              ...commonStyles.textInput,
+              backgroundColor: colors.surface,
+              marginTop: 8,
+            }}
+            placeholder="Temperature ºF *"
+            value={temperature}
+            keyboardType={'numeric'}
+            onChangeText={text => setTemperature(text)}
+          />
+          <Text style={{ color: colors.accent, marginTop: 16 }}>
+            Is the employee wearing a mask?
+          </Text>
+          <ToggleButton.Row
+            onValueChange={value => setMaskStatus(value)}
+            value={maskStatus}
+            style={{ marginTop: 8 }}>
+            <ToggleButton
+              value={'yes'}
+              icon={'check'}
+              color={colors.white}
               style={{
-                ...commonStyles.textInput,
-                backgroundColor: colors.surface,
-                marginTop: 8,
+                backgroundColor:
+                  maskStatus === 'yes' ? colors.primary : colors.accent,
+                marginRight: 8,
               }}
-              placeholder="Temperature ºF *"
-              value={temperature}
-              keyboardType={'numeric'}
-              onChangeText={text => setTemperature(text)}
             />
-            <Text style={{ color: colors.accent, marginTop: 16 }}>
-              Is the employee wearing a mask?
-            </Text>
-            <ToggleButton.Row
-              onValueChange={value => setMaskStatus(value)}
-              value={maskStatus}
-              style={{ marginTop: 8 }}>
-              <ToggleButton
-                value={'yes'}
-                icon={'check'}
-                color={colors.white}
-                style={{
-                  backgroundColor:
-                    maskStatus === 'yes' ? colors.primary : colors.accent,
-                  marginRight: 8,
-                }}
-              />
-              <ToggleButton
-                value={'no'}
-                icon={'close'}
-                color={colors.white}
-                style={{
-                  backgroundColor:
-                    maskStatus === 'no' ? colors.error : colors.accent,
-                }}
-              />
-            </ToggleButton.Row>
-          </View>
-        )}
-      </ScrollView>
-      {employee.hasAccess ? (
-        <>
+            <ToggleButton
+              value={'no'}
+              icon={'close'}
+              color={colors.white}
+              style={{
+                backgroundColor:
+                  maskStatus === 'no' ? colors.error : colors.accent,
+              }}
+            />
+          </ToggleButton.Row>
+        </View>
+      )}
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>{employee.hasAccess ? (
+        <View>
           <Button
             mode="contained"
             disabled={
@@ -108,7 +105,9 @@ const AddLogs = ({ route, navigation }) => {
               (parseFloat(temperature) > MAX_TEMP || maskStatus === 'no')
             }
             color={colors.primary}
-            style={{ position: 'absolute', bottom: 0, left: 20, width: '100%' }}
+            style={{
+              width: '100%',
+            }}
             uppercase={false}
             contentStyle={{
               height: 49,
@@ -116,7 +115,12 @@ const AddLogs = ({ route, navigation }) => {
             onPress={async () => {
               if (temperature !== '' && maskStatus !== '') {
                 setLoading(true);
-                await submitLog({ maskStatus, temperature, userId: employee.authId, hasAccess: true });
+                await submitLog({
+                  maskStatus,
+                  temperature,
+                  userId: employee.authId,
+                  hasAccess: true,
+                });
                 setLoading(false);
                 navigation.goBack();
               } else {
@@ -136,9 +140,7 @@ const AddLogs = ({ route, navigation }) => {
             }
             color={colors.error}
             style={{
-              position: 'absolute',
-              bottom: 56,
-              left: 20,
+              marginTop: 8,
               width: '100%',
             }}
             uppercase={false}
@@ -148,7 +150,12 @@ const AddLogs = ({ route, navigation }) => {
             onPress={async () => {
               if (temperature !== '' && maskStatus !== '') {
                 setLoading(true);
-                await submitLog({ maskStatus, temperature, userId: employee.authId, hasAccess: false });
+                await submitLog({
+                  maskStatus,
+                  temperature,
+                  userId: employee.authId,
+                  hasAccess: false,
+                });
                 setLoading(false);
                 navigation.goBack();
               } else {
@@ -159,15 +166,12 @@ const AddLogs = ({ route, navigation }) => {
               Revoke Access
             </Text>
           </Button>
-        </>
+        </View>
       ) : (
         <Button
           mode="contained"
           color={colors.white}
           style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 20,
             width: '100%',
           }}
           uppercase={false}
@@ -180,7 +184,8 @@ const AddLogs = ({ route, navigation }) => {
           <Text style={{ ...commonStyles.buttonLabel }}>Done</Text>
         </Button>
       )}
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
