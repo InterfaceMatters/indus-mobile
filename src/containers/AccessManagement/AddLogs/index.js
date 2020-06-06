@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import commonStyles from '../../../theme/commonStyles';
 import { ScrollView, TextInput, View } from 'react-native';
 import colors from '../../../theme/colors';
-import { Button } from 'react-native-paper';
+import { Button, ToggleButton } from 'react-native-paper';
 import { Text } from '../../../components/Typography';
 import { RequiredError } from '../../../operations/utils';
 import { fetchUserDataByAuthId } from '../../../operations/onBoarding';
 import { fetchUserDataByPhoneNumber } from '../../../operations/accessManagement';
 import Loader from '../../../components/Loader';
-import AccessCard from "../components/AccessCard";
+import AccessCard from '../components/AccessCard';
 
 const AddLogs = ({ route }) => {
   const [loading, setLoading] = useState(true);
@@ -43,9 +43,9 @@ const AddLogs = ({ route }) => {
         ...commonStyles.screenContainer2,
       }}>
       <ScrollView>
-        <AccessCard employeeDetails={employee}/>
+        <AccessCard employeeDetails={employee} />
         {employee.hasAccess && (
-          <View style={{marginTop: 16}}>
+          <View style={{ marginTop: 16 }}>
             <Text style={{ color: colors.accent }}>
               Record employee’s body temperature
             </Text>
@@ -55,13 +55,38 @@ const AddLogs = ({ route }) => {
                 backgroundColor: colors.surface,
                 marginTop: 8,
               }}
-              placeholder="Temperature *"
+              placeholder="Temperature ºF *"
               value={temperature}
+              keyboardType={'numeric'}
               onChangeText={text => setTemperature(text)}
             />
             <Text style={{ color: colors.accent, marginTop: 16 }}>
-              Is the employee wearing a mask?{' '}
+              Is the employee wearing a mask?
             </Text>
+            <ToggleButton.Row
+              onValueChange={value => setMaskStatus(value)}
+              value={maskStatus}
+              style={{ marginTop: 8 }}>
+              <ToggleButton
+                value={'yes'}
+                icon={'check'}
+                color={colors.white}
+                style={{
+                  backgroundColor:
+                    maskStatus === 'yes' ? colors.primary : colors.accent,
+                  marginRight: 8,
+                }}
+              />
+              <ToggleButton
+                value={'no'}
+                icon={'close'}
+                color={colors.white}
+                style={{
+                  backgroundColor:
+                    maskStatus === 'no' ? colors.error : colors.accent,
+                }}
+              />
+            </ToggleButton.Row>
           </View>
         )}
       </ScrollView>
