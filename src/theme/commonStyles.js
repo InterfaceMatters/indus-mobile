@@ -31,6 +31,10 @@ const commonStyles = StyleSheet.create({
     width: 24,
     height: 24,
   },
+  largeIconStyle: {
+    width: 32,
+    height: 32,
+  },
   smallIcon: {
     width: 20,
     height: 20,
