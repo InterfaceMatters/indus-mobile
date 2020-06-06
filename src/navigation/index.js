@@ -31,6 +31,7 @@ const Tab = createBottomTabNavigator();
 import { TransitionPresets } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
 import { ROLE_ID } from '../operations/constants';
+import AddLogs from "../containers/AccessManagement/AddLogs";
 
 const RootTabNav = () => {
   const [roleId, setRoleId] = useState(null);
@@ -101,6 +102,11 @@ const Navigation = ({ user }) => (
         <RootStack.Screen
           name="New grievance report"
           component={NewGrievanceReport}
+          options={{ ...headerStyle, ...defaultHeaderStyle }}
+        />
+        <RootStack.Screen
+          name="Access Status"
+          component={AddLogs}
           options={{ ...headerStyle, ...defaultHeaderStyle }}
         />
       </RootStack.Navigator>

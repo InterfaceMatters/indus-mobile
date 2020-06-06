@@ -2,6 +2,7 @@ import { firestoreIns } from '../../firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 import { GenericError } from '../utils';
 import { ROLE_ID } from '../constants';
+import Message from '../../components/Message';
 
 /**
  * Fetch all employees
@@ -25,4 +26,17 @@ const fetchAllEmployees = async () => {
   }
 };
 
-export { fetchAllEmployees };
+const fetchUserDataByPhoneNumber = async phoneNumber => {
+  try {
+    const userData = await firestoreIns
+      .collection('users')
+      .where('phoneNumber', '==', phoneNumber)
+      .get();
+    return { ...userData.data(), id: userData.id };
+  } catch (e) {
+    Message.error(e.message);
+    throw new Error(e);
+  }
+};
+
+export { fetchAllEmployees, fetchUserDataByPhoneNumber };
