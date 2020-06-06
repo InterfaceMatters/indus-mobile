@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { GenericError } from '../utils';
 import { ROLE_ID } from '../constants';
 import Message from '../../components/Message';
+import firebase from '@react-native-firebase/app';
 
 /**
  * Fetch all employees
@@ -26,17 +27,56 @@ const fetchAllEmployees = async () => {
   }
 };
 
+/**
+ * Fetch employee details by phoneNumber
+ * @param phoneNumber
+ * @returns {Promise<null|{[p: string]: value}>}
+ */
+
 const fetchUserDataByPhoneNumber = async phoneNumber => {
   try {
     const userData = await firestoreIns
       .collection('users')
       .where('phoneNumber', '==', phoneNumber)
       .get();
-    return { ...userData.data(), id: userData.id };
+    if (userData.docs.length) {
+      return { ...userData.docs[0].data() };
+    } else {
+      throw Error('Record not found. Please enter correct phone number.');
+    }
   } catch (e) {
     Message.error(e.message);
-    throw new Error(e);
+    return null;
   }
 };
 
-export { fetchAllEmployees, fetchUserDataByPhoneNumber };
+/**
+ * Submit log
+ * @param temperature
+ * @param maskStatus
+ * @param userId
+ * @param hasAccess
+ * @returns {Promise<void>}
+ */
+
+const submitLog = async ({ temperature, maskStatus, userId, hasAccess }) => {
+  const currentTime = firebase.firestore.FieldValue.serverTimestamp();
+  const securityUserId = await AsyncStorage.getItem('userId');
+
+  try {
+    await firestoreIns.collection('dailyLogs').add({
+      createdDate: currentTime,
+      updatedDate: currentTime,
+      createdBy: securityUserId,
+      temperature: parseFloat(temperature),
+      maskStatus,
+      userId,
+      hasAccess,
+    });
+    Message.success('Added successfully.');
+  } catch (e) {
+    Message.error(e.message);
+  }
+};
+
+export { fetchAllEmployees, fetchUserDataByPhoneNumber, submitLog };

@@ -10,7 +10,7 @@ import { SubHeading, Text } from '../../../components/Typography';
 import QrScreen from '../../Home/components/QrScreen';
 import { RequiredError } from '../../../operations/utils';
 
-const QRScanner = ({navigation}) => {
+const QRScanner = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [qrScanner, setQRScanner] = useState(false);
@@ -78,8 +78,10 @@ const QRScanner = ({navigation}) => {
           height: 49,
         }}
         onPress={async () => {
-          if (phoneNumber.length < 10) {
-            navigation.navigate('Access Status', { phoneNumber });
+          if (phoneNumber) {
+            navigation.navigate('Access Status', {
+              phoneNumber: `+91${phoneNumber}`,
+            });
           } else {
             RequiredError();
           }

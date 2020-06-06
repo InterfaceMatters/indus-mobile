@@ -36,9 +36,7 @@ const EmployeeList = ({navigation}) => {
           data={employeeList}
           renderItem={({ item, index }) => (
             <ListCard
-              handlePress={() => {
-                console.log('Pressed.');
-              }}
+              handlePress={() => null}
               key={index}
               leftIcon={item.hasAccess ? icAllow : icBlock}
               leftContent={item.name}

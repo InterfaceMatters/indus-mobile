@@ -6,11 +6,15 @@ import { Button, ToggleButton } from 'react-native-paper';
 import { Text } from '../../../components/Typography';
 import { RequiredError } from '../../../operations/utils';
 import { fetchUserDataByAuthId } from '../../../operations/onBoarding';
-import { fetchUserDataByPhoneNumber } from '../../../operations/accessManagement';
+import {
+  fetchUserDataByPhoneNumber,
+  submitLog,
+} from '../../../operations/accessManagement';
 import Loader from '../../../components/Loader';
 import AccessCard from '../components/AccessCard';
+import { MAX_TEMP } from '../../../operations/constants';
 
-const AddLogs = ({ route }) => {
+const AddLogs = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [employee, setEmployee] = useState(null);
   const [temperature, setTemperature] = useState('');
@@ -22,9 +26,13 @@ const AddLogs = ({ route }) => {
     const employeeDetails = uid
       ? await fetchUserDataByAuthId(uid)
       : await fetchUserDataByPhoneNumber(phoneNumber);
-    setEmployee(employeeDetails);
-    setLoading(false);
-    return null;
+    if(employeeDetails !== null){
+      setEmployee(employeeDetails);
+      setLoading(false);
+    }
+    else {
+      navigation.goBack();
+    }
   };
 
   useEffect(() => {
@@ -90,29 +98,86 @@ const AddLogs = ({ route }) => {
           </View>
         )}
       </ScrollView>
-      {employee.hasAccess && (
+      {employee.hasAccess ? (
+        <>
+          <Button
+            mode="contained"
+            disabled={
+              temperature === '' ||
+              maskStatus === '' ||
+              (parseFloat(temperature) > MAX_TEMP || maskStatus === 'no')
+            }
+            color={colors.primary}
+            style={{ position: 'absolute', bottom: 0, left: 20, width: '100%' }}
+            uppercase={false}
+            contentStyle={{
+              height: 49,
+            }}
+            onPress={async () => {
+              if (temperature !== '' && maskStatus !== '') {
+                setLoading(true);
+                await submitLog({ maskStatus, temperature, userId: employee.authId, hasAccess: true });
+                setLoading(false);
+                navigation.goBack();
+              } else {
+                RequiredError();
+              }
+            }}>
+            <Text style={{ ...commonStyles.buttonLabel, color: colors.white }}>
+              Provide Access
+            </Text>
+          </Button>
+          <Button
+            mode="contained"
+            disabled={
+              temperature === '' ||
+              maskStatus === '' ||
+              (parseFloat(temperature) < MAX_TEMP && maskStatus === 'yes')
+            }
+            color={colors.error}
+            style={{
+              position: 'absolute',
+              bottom: 56,
+              left: 20,
+              width: '100%',
+            }}
+            uppercase={false}
+            contentStyle={{
+              height: 49,
+            }}
+            onPress={async () => {
+              if (temperature !== '' && maskStatus !== '') {
+                setLoading(true);
+                await submitLog({ maskStatus, temperature, userId: employee.authId, hasAccess: false });
+                setLoading(false);
+                navigation.goBack();
+              } else {
+                RequiredError();
+              }
+            }}>
+            <Text style={{ ...commonStyles.buttonLabel, color: colors.white }}>
+              Revoke Access
+            </Text>
+          </Button>
+        </>
+      ) : (
         <Button
           mode="contained"
-          disabled={temperature === '' || maskStatus === ''}
-          color={colors.primary}
-          style={{ position: 'absolute', bottom: 0, left: 20, width: '100%' }}
+          color={colors.white}
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 20,
+            width: '100%',
+          }}
           uppercase={false}
           contentStyle={{
             height: 49,
           }}
           onPress={async () => {
-            if (temperature !== '' && maskStatus !== '') {
-              setLoading(true);
-              // await submitLog();
-              setLoading(false);
-              navigation.goBack();
-            } else {
-              RequiredError();
-            }
+            navigation.goBack();
           }}>
-          <Text style={{ ...commonStyles.buttonLabel, color: colors.white }}>
-            Done
-          </Text>
+          <Text style={{ ...commonStyles.buttonLabel }}>Done</Text>
         </Button>
       )}
     </View>
