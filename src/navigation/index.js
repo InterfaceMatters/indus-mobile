@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { defaultHeaderStyle, headerStyle } from '../utils';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -22,44 +22,60 @@ import Home from '../containers/Home';
 import Protocol from '../containers/Protocol';
 import Grievances from '../containers/Grievances';
 import RequestOtp from '../containers/onBoarding/RequestOtp';
-import AccessManagement from "../containers/AccessManagement";
+import AccessManagement from '../containers/AccessManagement';
 
 const Stack = createStackNavigator();
 const RootStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 import { TransitionPresets } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-community/async-storage';
+import { ROLE_ID } from '../operations/constants';
 
-const RootTabNav = () => (
-  <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
+const RootTabNav = () => {
+  const [roleId, setRoleId] = useState(null);
 
-        if (route.name === 'Home') {
-          iconName = focused ? icHomeActive : icHomeInactive;
-        } else if (route.name === 'Protocols') {
-          iconName = focused ? icProtocolActive : icProtocolInactive;
-        } else if (route.name === 'Grievances') {
-          iconName = focused ? icGrievanceActive : icGrievanceInactive;
-        } else if (route.name === 'Access Management') {
-          iconName = focused ? icLogsActive : icLogsInactive;
-        }
+  useEffect(() => {
+    async function getRoleId() {
+      const roleId = await AsyncStorage.getItem('roleId');
+      setRoleId(parseInt(roleId));
+    }
+    getRoleId();
+  }, []);
 
-        return <Image source={iconName} style={commonStyles.iconStyle} />;
-      },
-    })}
-    tabBarOptions={{
-      activeTintColor: colors.primary,
-      inactiveTintColor: colors.accent,
-      showLabel: false,
-    }}>
-    <Tab.Screen name="Home" component={Home} />
-    <Tab.Screen name="Access Management" component={AccessManagement} />
-    <Tab.Screen name="Protocols" component={Protocol} />
-    <Tab.Screen name="Grievances" component={Grievances} />
-  </Tab.Navigator>
-);
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = focused ? icHomeActive : icHomeInactive;
+          } else if (route.name === 'Protocols') {
+            iconName = focused ? icProtocolActive : icProtocolInactive;
+          } else if (route.name === 'Grievances') {
+            iconName = focused ? icGrievanceActive : icGrievanceInactive;
+          } else if (route.name === 'Access Management') {
+            iconName = focused ? icLogsActive : icLogsInactive;
+          }
+
+          return <Image source={iconName} style={commonStyles.iconStyle} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: colors.primary,
+        inactiveTintColor: colors.accent,
+        showLabel: false,
+      }}>
+      <Tab.Screen name="Home" component={Home} />
+      {roleId === ROLE_ID.SECURITY && (
+        <Tab.Screen name="Access Management" component={AccessManagement} />
+      )}
+      <Tab.Screen name="Protocols" component={Protocol} />
+      <Tab.Screen name="Grievances" component={Grievances} />
+    </Tab.Navigator>
+  );
+};
 
 const Navigation = ({ user }) => (
   <NavigationContainer>
