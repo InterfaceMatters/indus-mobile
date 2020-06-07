@@ -4,4 +4,6 @@ const ROLE_ID = {
   SECURITY: 30,
 };
 
-export { ROLE_ID };
+const MAX_TEMP = 97.7;
+
+export { ROLE_ID, MAX_TEMP };

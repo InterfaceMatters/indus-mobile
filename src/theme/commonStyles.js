@@ -31,6 +31,10 @@ const commonStyles = StyleSheet.create({
     width: 24,
     height: 24,
   },
+  largeIconStyle: {
+    width: 32,
+    height: 32,
+  },
   smallIcon: {
     width: 20,
     height: 20,
@@ -41,6 +45,13 @@ const commonStyles = StyleSheet.create({
     marginTop: 16,
     marginRight: 16,
   },
+  fab: {
+    position: 'absolute',
+    backgroundColor: colors.primary,
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  }
 });
 
 export default commonStyles;
