@@ -1,5 +1,6 @@
 import { authIns, firestoreIns } from '../../firebase';
 import Message from '../../components/Message';
+import firebase from '@react-native-firebase/app';
 
 /**
  * Fetch user details by auth id.
@@ -12,10 +13,40 @@ const fetchUserDataByAuthId = async uid => {
       .collection('users')
       .doc(uid)
       .get();
-    return { ...userData.data(), id: userData.id };
+    const data = userData.data();
+    const dayAccess = await fetchDayAccessStatus(uid);
+    const hasAccess = dayAccess !== null ? dayAccess : data.hasAccess;
+    return { ...data, id: userData.id, hasAccess };
   } catch (e) {
     Message.error(e.message);
     throw new Error(e);
+  }
+};
+
+const fetchDayAccessStatus = async uid => {
+  try {
+    const yesterday = new Date(Date.now() - 86400000);
+    const today = new Date(Date.now());
+
+    const yesterdayFirestore = firebase.firestore.Timestamp.fromDate(yesterday);
+    const todayFirestore = firebase.firestore.Timestamp.fromDate(today);
+
+    const data = await firestoreIns
+      .collection('dailyLogs')
+      .where('userId', '==', uid)
+      .where('createdDate', '>', yesterdayFirestore)
+      .where('createdDate', '<', todayFirestore)
+      .limit(1)
+      .get();
+
+    if (data.docs.length) {
+      const accessData = data.docs[0].data();
+      return accessData.hasAccess;
+    } else {
+      throw Error('No results.');
+    }
+  } catch (e) {
+    return null;
   }
 };
 
