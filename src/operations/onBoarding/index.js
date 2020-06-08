@@ -5,9 +5,10 @@ import firebase from '@react-native-firebase/app';
 /**
  * Fetch user details by auth id.
  * @param uid
+ * @param sec
  * @returns {Promise<{[p: string]: value, id: *}>}
  */
-const fetchUserDataByAuthId = async uid => {
+const fetchUserDataByAuthId = async (uid, sec=false) => {
   try {
     const userData = await firestoreIns
       .collection('users')
@@ -15,7 +16,7 @@ const fetchUserDataByAuthId = async uid => {
       .get();
     const data = userData.data();
     const dayAccess = await fetchDayAccessStatus(uid);
-    const hasAccess = dayAccess !== null ? dayAccess : data.hasAccess;
+    const hasAccess = dayAccess !== null && !sec ? dayAccess : data.hasAccess;
     return { ...data, id: userData.id, hasAccess };
   } catch (e) {
     Message.error(e.message);
@@ -26,7 +27,6 @@ const fetchUserDataByAuthId = async uid => {
 const fetchDayAccessStatus = async uid => {
   try {
     const yesterday = new Date(Date.now() - 86400000);
-    const today = new Date(Date.now());
 
     const yesterdayFirestore = firebase.firestore.Timestamp.fromDate(yesterday);
     const todayFirestore = firebase.firestore.Timestamp.fromDate(today);
@@ -35,7 +35,6 @@ const fetchDayAccessStatus = async uid => {
       .collection('dailyLogs')
       .where('userId', '==', uid)
       .where('createdDate', '>', yesterdayFirestore)
-      .where('createdDate', '<', todayFirestore)
       .limit(1)
       .get();
 

@@ -24,7 +24,7 @@ const AddLogs = ({ route, navigation }) => {
 
   const fetchEmployeeData = async () => {
     const employeeDetails = uid
-      ? await fetchUserDataByAuthId(uid)
+      ? await fetchUserDataByAuthId(uid, true)
       : await fetchUserDataByPhoneNumber(phoneNumber);
     if (employeeDetails !== null) {
       setEmployee(employeeDetails);
