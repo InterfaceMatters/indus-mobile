@@ -62,6 +62,7 @@ const fetchUserDataByPhoneNumber = async phoneNumber => {
 const submitLog = async ({ temperature, maskStatus, userId, hasAccess }) => {
   const currentTime = firebase.firestore.FieldValue.serverTimestamp();
   const securityUserId = await AsyncStorage.getItem('userId');
+  const orgId = await AsyncStorage.getItem('orgId');
 
   try {
     await firestoreIns.collection('dailyLogs').add({
@@ -72,6 +73,7 @@ const submitLog = async ({ temperature, maskStatus, userId, hasAccess }) => {
       maskStatus,
       userId,
       hasAccess,
+      orgId
     });
     Message.success('Added successfully.');
   } catch (e) {
